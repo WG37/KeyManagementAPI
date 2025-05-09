@@ -7,6 +7,6 @@ namespace KeyManagementAPI.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        DbSet<Key> Keys { get; set; }
+        public DbSet<Key> Keys { get; set; }
     }
 }
