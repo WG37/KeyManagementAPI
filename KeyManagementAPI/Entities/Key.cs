@@ -6,8 +6,8 @@
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Algorithm { get; set; }
-        public int Length { get; set; }
+        public string Keybytes { get; set; }
+        public int KeySize { get; set; }    
         public KeyStatus Status { get; set; }
         public int Version { get; set; }
         public DateTime CreatedOn { get; set; }

@@ -1,0 +1,30 @@
+﻿@page
+@model KeyManagementAPI.Pages.CreateKeyModel
+@{
+    ViewData["Title"] = "Key Creation";
+}
+
+<div class="container py-5">
+    <h1 class="text-center mb-4">Create New Key</h1>
+    <form method="post">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Name</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="KeySize" class="form-label">Key Size (bits)</label>
+                    <select asp-for="KeySize" class="form-select">
+                        <option>128</option>
+                        <option>192</option>
+                        <option>256</option>
+                    </select>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary px-4">Generate</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

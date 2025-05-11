@@ -1,0 +1,89 @@
+﻿@* Pages/Shared/_Layout.cshtml *@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Key Management</title>
+    <link rel="icon" href="~/assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
+
+    <!-- Fonts & Icons -->
+    <script src="~/assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+          google: { families: ["Public Sans:300,400,500,600,700"] },
+          custom: {
+            families: ["Font Awesome 5 Solid","Font Awesome 5 Regular","Font Awesome 5 Brands","simple-line-icons"],
+            urls: ["~/assets/css/fonts.min.css"]
+          },
+          active: () => sessionStorage.fonts = true
+        });
+    </script>
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="~/assets/css/kaiadmin.min.css" />
+
+    @RenderSection("Head", required: false)
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar" data-background-color="dark">
+            <div class="sidebar-logo">
+                <a href="@Url.Page("/Index")" class="logo">
+                    <img src="~/assets/img/kaiadmin/logo_light.svg"
+                         alt="brand" class="navbar-brand" height="20" />
+                </a>
+            </div>
+            <div class="sidebar-wrapper scrollbar-inner">
+                <div class="sidebar-content">
+                    <ul class="nav nav-secondary">
+                        <li class="nav-item">
+                            <a href="@Url.Page("/Index")">
+                                <i class="fas fa-home"></i><p>Dashboard</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Page("/CreateKey")">
+                                <i class="fas fa-key"></i><p>Create Key</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Page("/Encrypt")">
+                                <i class="fas fa-lock"></i><p>Encrypt</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Page("/Decrypt")">
+                                <i class="fas fa-unlock"></i><p>Decrypt</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Sidebar -->
+
+        <div class="main-panel">
+            @RenderBody()
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <span>© 2025 KeyMgmt</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Core JS -->
+    <script src="~/assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="~/assets/js/core/popper.min.js"></script>
+    <script src="~/assets/js/core/bootstrap.min.js"></script>
+    <script src="~/assets/js/kaiadmin.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

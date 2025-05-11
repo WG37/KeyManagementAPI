@@ -1,0 +1,32 @@
+﻿@page
+@model KeyManagementAPI.Pages.IndexModel
+@{
+    ViewData["Title"] = "Key Management Board";
+}
+
+<div class="container py-5">
+    <h1 class="text-center mb-4">Keys</h1>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Key Length</th>
+                    <th>Status</th>
+                    <th>Creation Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var k in Model.Keys)
+                {
+                    <tr>
+                        <td>@k.Name</td>
+                        <td>@k.KeySize</td>
+                        <td>@k.Status</td>
+                        <td>@k.CreatedOn.ToString("g")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,3 +1,4 @@
+using AutoMapper;
 using KeyManagementAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +15,26 @@ namespace KeyManagementAPI
                 options.UseSqlServer(builder.Configuration.GetConnectionString("KeyMgmtDb")));
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Automapper Config
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new KeyMapProfile());
+            });
+            
+            IMapper mapper = mappingConfig.CreateMapper();
+
+            builder.Services.AddSingleton(mapper);
+
+            // HTTPClient Registration
+            builder.Services.AddHttpClient("Api", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"]);
+            });
+
+            builder.Services.AddRazorPages();
 
             var app = builder.Build();
 
@@ -27,12 +45,15 @@ namespace KeyManagementAPI
                 app.UseSwaggerUI();
             }
 
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
 
             app.MapControllers();
+
+            app.MapRazorPages();
 
             app.Run();
         }
