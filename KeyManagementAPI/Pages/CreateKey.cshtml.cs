@@ -11,6 +11,7 @@ namespace KeyManagementAPI.Pages
 
         [BindProperty]
         public string Name { get; set; }
+
         [BindProperty]
         public int KeySize { get; set; } = 256;
 

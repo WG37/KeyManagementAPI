@@ -46,6 +46,7 @@ namespace KeyManagementAPI
             }
 
             app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

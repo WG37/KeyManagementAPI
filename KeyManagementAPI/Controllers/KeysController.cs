@@ -29,24 +29,22 @@ public class KeysController : ControllerBase
         key.Id = Guid.NewGuid();
         key.CreatedOn = DateTime.UtcNow;
 
-        var keyBytes = new byte[key.KeySize / 8];
-        var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(keyBytes);
-        key.Keybytes = Convert.ToBase64String(keyBytes);
+        var bytes = new byte[key.KeySize / 8];
+        RandomNumberGenerator.Create().GetBytes(bytes);
+        key.Keybytes = bytes;
 
         _db.Keys.Add(key);
         await _db.SaveChangesAsync();
 
         var result = _mapper.Map<KeyDto>(key);          // Key => keyDto
        
-        return CreatedAtAction(nameof(Get), new { id = key.Id }, key);
+        return CreatedAtAction(nameof(Get), new { id = key.Id }, result);
     }
 
     [HttpGet]
     public async Task<ActionResult<KeyDto>> GetAll()
     {
         var keys = await _db.Keys.ProjectTo<KeyDto>(_mapper.ConfigurationProvider).ToListAsync();
-
         return Ok(keys);
     }
 
@@ -72,8 +70,8 @@ public class KeysController : ControllerBase
         var key = await _db.Keys.FindAsync(id);
         if (key == null) return NotFound();
 
-        _db.Keys.Remove(key);
+        key.Status = KeyStatus.Deleted;
         await _db.SaveChangesAsync();
-        return Ok(new { message = "Key succesfully deleted" });
+        return NoContent();
     }
 }

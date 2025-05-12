@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeyManagementAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250509131212_SeedKeyBytes")]
-    partial class SeedKeyBytes
+    [Migration("20250511103210_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,9 +37,9 @@ namespace KeyManagementAPI.Migrations
                     b.Property<int>("KeySize")
                         .HasColumnType("int");
 
-                    b.Property<string>("Keybytes")
+                    b.Property<byte[]>("Keybytes")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -34,9 +34,9 @@ namespace KeyManagementAPI.Migrations
                     b.Property<int>("KeySize")
                         .HasColumnType("int");
 
-                    b.Property<string>("Keybytes")
+                    b.Property<byte[]>("Keybytes")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

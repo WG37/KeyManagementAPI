@@ -22,7 +22,7 @@ namespace KeyManagementAPI.Controllers
             if (key.Status != KeyStatus.Active) return BadRequest(new { message = "Key is not active" });
 
             using var aes = Aes.Create();
-            aes.Key = Convert.FromBase64String(key.Keybytes);
+            aes.Key = key.Keybytes;
             aes.GenerateIV();
 
             var ptBytes = Encoding.UTF8.GetBytes(request.PlainText);
@@ -43,7 +43,7 @@ namespace KeyManagementAPI.Controllers
             if (key.Status != KeyStatus.Active) return BadRequest(new { message = "Key is not active" });
 
             using var aes = Aes.Create();
-            aes.Key = Convert.FromBase64String(key.Keybytes);
+            aes.Key = key.Keybytes;
             aes.IV = Convert.FromBase64String(request.Iv);
 
             var ctBytes = Convert.FromBase64String(request.CipherText);

@@ -1,3 +1,4 @@
+using KeyManagementAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -5,8 +6,42 @@ namespace KeyManagementAPI.Pages
 {
     public class EncryptModel : PageModel
     {
-        public void OnGet()
+        private readonly IHttpClientFactory _factory;
+        public EncryptModel(IHttpClientFactory factory) => _factory = factory;
+
+
+        [BindProperty]
+        public Guid? SelectedKeyId { get; set; }
+        [BindProperty]
+        public string PlainText { get; set; }
+
+        public List<KeyDto> Keys { get; private set; }
+        public EncryptResponse Result { get; private set; }
+
+        public async Task OnGetAsync()
         {
+            Keys = await _factory.CreateClient("Api").GetFromJsonAsync<List<KeyDto>>("api/keys");
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!SelectedKeyId.HasValue)
+            {
+                ModelState.AddModelError(nameof(SelectedKeyId), "A key must be selected");
+
+                Keys = await _factory.CreateClient("Api").GetFromJsonAsync<List<KeyDto>>("api/keys");      // reloads option dropdown
+                return Page();
+            }
+
+            await OnGetAsync();
+            var client = _factory.CreateClient("Api");
+            var response = await client.PostAsJsonAsync($"api/keys/{SelectedKeyId}/encrypt", new EncryptRequest { PlainText = PlainText });
+
+            if (response.IsSuccessStatusCode)
+            {
+                Result = await response.Content.ReadFromJsonAsync<EncryptResponse>();
+            }
+            return Page();
         }
     }
 }
