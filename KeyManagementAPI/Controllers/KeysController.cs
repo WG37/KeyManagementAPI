@@ -16,33 +16,31 @@ public class KeysController : ControllerBase
     private readonly AppDbContext _db;
     private readonly IMapper _mapper;
 
-    public KeysController(AppDbContext db, IMapper mapper)  => 
-        
-        (_db, _mapper) = (db, mapper); 
+    public KeysController(AppDbContext db, IMapper mapper)  => (_db, _mapper) = (db, mapper); 
 
 
     [HttpPost]
     public async Task<ActionResult<KeyDto>> Create([FromBody] CreateKeyDto keyDto)
     {
-        var key = _mapper.Map<Key>(keyDto);        // auto maps CreateKeyDto => Key
+        var key = _mapper.Map<Key>(keyDto);        // maps CreateKeyDto => Key
 
         key.Id = Guid.NewGuid();
         key.CreatedOn = DateTime.UtcNow;
 
-        var bytes = new byte[key.KeySize / 8];
+        var bytes = new byte[key.KeySize / 8]; 
         RandomNumberGenerator.Create().GetBytes(bytes);
         key.Keybytes = bytes;
 
         _db.Keys.Add(key);
         await _db.SaveChangesAsync();
 
-        var result = _mapper.Map<KeyDto>(key);          // Key => keyDto
+        var result = _mapper.Map<KeyDto>(key);          // maps Key => keyDto
        
         return CreatedAtAction(nameof(Get), new { id = key.Id }, result);
     }
 
     [HttpGet]
-    public async Task<ActionResult<KeyDto>> GetAll()
+    public async Task<ActionResult<List<KeyDto>>> GetAll()
     {
         var keys = await _db.Keys.ProjectTo<KeyDto>(_mapper.ConfigurationProvider).ToListAsync();
         return Ok(keys);
@@ -52,9 +50,7 @@ public class KeysController : ControllerBase
     public async Task<ActionResult<KeyDto>> Get(Guid id)
     {
         var key = await _db.Keys.FindAsync(id);
-        if (key == null) 
-            return NotFound(); 
-
+        if (key == null) return NotFound(); 
         if (key.Status != KeyStatus.Active) 
         return BadRequest(new { message = "Key is not active or does not exist" });
 
@@ -70,7 +66,7 @@ public class KeysController : ControllerBase
         var key = await _db.Keys.FindAsync(id);
         if (key == null) return NotFound();
 
-        key.Status = KeyStatus.Deleted;
+        _db.Keys.Remove(key);
         await _db.SaveChangesAsync();
         return NoContent();
     }

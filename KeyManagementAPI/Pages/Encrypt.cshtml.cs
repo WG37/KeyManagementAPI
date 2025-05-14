@@ -25,14 +25,6 @@ namespace KeyManagementAPI.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!SelectedKeyId.HasValue)
-            {
-                ModelState.AddModelError(nameof(SelectedKeyId), "A key must be selected");
-
-                Keys = await _factory.CreateClient("Api").GetFromJsonAsync<List<KeyDto>>("api/keys");      // reloads option dropdown
-                return Page();
-            }
-
             await OnGetAsync();
             var client = _factory.CreateClient("Api");
             var response = await client.PostAsJsonAsync($"api/keys/{SelectedKeyId}/encrypt", new EncryptRequest { PlainText = PlainText });

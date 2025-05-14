@@ -20,21 +20,21 @@
             <tbody>
                 @foreach (var k in Model.Keys)
                 {
-                    <tr class="@(k.Status == KeyStatus.Deleted ? "table-danger" : "")">
+                 <tr class="@(k.Status == KeyStatus.Deleted)">
                         <td>@k.Name</td>
                         <td>@k.KeySize</td>
                         <td>@k.Status</td>
-                        <td>@k.CreatedOn:g</td>
+                        <td>@k.CreatedOn</td>
                         <td>
-                            @if (k.Status == KeyStatus.Active)
-                            {
-             <form method="post" asp-page-handler="Delete" class="d-inline">
-                 <input type="hidden" name="id" value="@k.Id" />
-                 <button type="submit" class="btn btn-sm btn-warning">Revoke</button>
-             </form>
-                            }
-                        </td>
-                    </tr>
+                 @if (k.Status == KeyStatus.Active)
+                 {
+                <form method="post" asp-page-handler="Delete" class="d-inline"> 
+                <input type="hidden" name="id" value="@k.Id" />
+                <button type="submit" class="btn btn-sm btn-warning">Delete</button>
+                </form>
+                 }
+                 </td>
+                 </tr>
                 }
             </tbody>
         </table>

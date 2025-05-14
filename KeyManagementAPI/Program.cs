@@ -18,15 +18,16 @@ namespace KeyManagementAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Automapper Config
-            var mappingConfig = new MapperConfiguration(cfg =>
+            // automap registration
+            var mappingConfig = new MapperConfiguration(config =>
             {
-                cfg.AddProfile(new KeyMapProfile());
+                config.AddProfile(new KeyMapProfile());
             });
             
             IMapper mapper = mappingConfig.CreateMapper();
 
             builder.Services.AddSingleton(mapper);
+
 
             // HTTPClient Registration
             builder.Services.AddHttpClient("Api", client =>

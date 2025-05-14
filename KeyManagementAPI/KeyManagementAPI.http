@@ -1,6 +1,0 @@
-@KeyManagementAPI_HostAddress = http://localhost:5276
-
-GET {{KeyManagementAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

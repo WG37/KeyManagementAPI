@@ -1,25 +1,27 @@
 ﻿using KeyManagementAPI.Data;
-using KeyManagementAPI.Entities;
 using KeyManagementAPI.DTOs;
+using KeyManagementAPI.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace KeyManagementAPI.Controllers
 {
-    [Route("api/keys/{keyId}")]
     [ApiController]
+    [Route("api/keys/{keyId}")]
     public class CiphersController : ControllerBase
     {
         private readonly AppDbContext _db;
         public CiphersController(AppDbContext db) => _db = db;
+
 
         [HttpPost("encrypt")]
         public async Task<IActionResult> Encrypt(Guid keyId, [FromBody] EncryptRequest request)
         {
             var key = await _db.Keys.FindAsync(keyId);
             if (key == null) return NotFound();
-            if (key.Status != KeyStatus.Active) return BadRequest(new { message = "Key is not active" });
+            if (key.Status != KeyStatus.Active)
+                return BadRequest();
 
             using var aes = Aes.Create();
             aes.Key = key.Keybytes;
@@ -40,7 +42,8 @@ namespace KeyManagementAPI.Controllers
         {
             var key = await _db.Keys.FindAsync(keyId);
             if (key == null) return NotFound();
-            if (key.Status != KeyStatus.Active) return BadRequest(new { message = "Key is not active" });
+            if (key.Status != KeyStatus.Active)
+                return BadRequest();
 
             using var aes = Aes.Create();
             aes.Key = key.Keybytes;
@@ -49,7 +52,9 @@ namespace KeyManagementAPI.Controllers
             var ctBytes = Convert.FromBase64String(request.CipherText);
             var ptBytes = aes.CreateDecryptor().TransformFinalBlock(ctBytes, 0, ctBytes.Length);
 
-            return Ok(new DecryptResponse { PlainText = Encoding.UTF8.GetString(ptBytes) 
+            return Ok(new DecryptResponse
+            {
+                PlainText = Encoding.UTF8.GetString(ptBytes)
             });
         }
     }
