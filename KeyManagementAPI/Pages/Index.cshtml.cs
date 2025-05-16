@@ -2,27 +2,26 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using KeyManagementAPI.DTOs;
+using KeyManagementAPI.Services;
 
 
 namespace KeyManagementAPI.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly IHttpClientFactory _factory;
-        public IndexModel(IHttpClientFactory factory) => _factory = factory;
+        private readonly IKeyService _keyservice;
+        public IndexModel(IKeyService keyservice) => _keyservice = keyservice;
 
-        public List<KeyDto> Keys { get; set; }
+        public List<KeyDto> Keys { get; private set; } = new();
 
         public async Task OnGetAsync()
         {
-            var client = _factory.CreateClient("Api");
-            Keys = await client.GetFromJsonAsync<List<KeyDto>>("api/Keys");
+            Keys = await _keyservice.GetAllAsync();
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync(Guid id)
+        public async Task<IActionResult> OnPostDelete(Guid id)
         {
-            var client = _factory.CreateClient("Api");
-            await client.DeleteAsync($"api/keys/{id}");
+            await _keyservice.DeleteAsync(id);
             return RedirectToPage();
         }
     }

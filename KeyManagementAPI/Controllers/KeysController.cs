@@ -4,8 +4,7 @@ using KeyManagementAPI.Entities;
 using KeyManagementAPI.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+using KeyManagementAPI.Services;
 
 namespace KeyManagementAPI.Controllers;
 
@@ -13,61 +12,35 @@ namespace KeyManagementAPI.Controllers;
 [Route("api/keys")]
 public class KeysController : ControllerBase
 {
-    private readonly AppDbContext _db;
-    private readonly IMapper _mapper;
+    private readonly IKeyService _service;
 
-    public KeysController(AppDbContext db, IMapper mapper)  => (_db, _mapper) = (db, mapper); 
+    public KeysController(IKeyService service)  => _service = service; 
 
 
     [HttpPost]
     public async Task<ActionResult<KeyDto>> Create([FromBody] CreateKeyDto keyDto)
     {
-        var key = _mapper.Map<Key>(keyDto);        // maps CreateKeyDto => Key
-
-        key.Id = Guid.NewGuid();
-        key.CreatedOn = DateTime.UtcNow;
-
-        var bytes = new byte[key.KeySize / 8]; 
-        RandomNumberGenerator.Create().GetBytes(bytes);
-        key.Keybytes = bytes;
-
-        _db.Keys.Add(key);
-        await _db.SaveChangesAsync();
-
-        var result = _mapper.Map<KeyDto>(key);          // maps Key => keyDto
-       
-        return CreatedAtAction(nameof(Get), new { id = key.Id }, result);
+        var result = await _service.CreateAsync(keyDto);
+        return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<KeyDto>>> GetAll()
     {
-        var keys = await _db.Keys.ProjectTo<KeyDto>(_mapper.ConfigurationProvider).ToListAsync();
-        return Ok(keys);
+        return Ok(await _service.GetAllAsync());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<KeyDto>> Get(Guid id)
     {
-        var key = await _db.Keys.FindAsync(id);
-        if (key == null) return NotFound(); 
-        if (key.Status != KeyStatus.Active) 
-        return BadRequest(new { message = "Key is not active or does not exist" });
-
-        var dto = _mapper.Map<KeyDto>(key);
-
-        return Ok(dto);
+        return Ok(await _service.GetAsync(id));
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var key = await _db.Keys.FindAsync(id);
-        if (key == null) return NotFound();
-
-        _db.Keys.Remove(key);
-        await _db.SaveChangesAsync();
+        await _service.DeleteAsync(id);
         return NoContent();
     }
 }

@@ -1,39 +1,55 @@
-using KeyManagementAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using KeyManagementAPI.DTOs;
+using KeyManagementAPI.Services;  // IKeyService & ICryptoService
 
 namespace KeyManagementAPI.Pages
 {
     public class DecryptModel : PageModel
     {
-        private readonly IHttpClientFactory _factory;
-        public DecryptModel(IHttpClientFactory factory) => _factory = factory;
+        private readonly IKeyService _keyService;
+        private readonly ICipherService _cipherService;
+
+        public DecryptModel(IKeyService keyService, ICipherService cryptoService)
+        {
+            _keyService = keyService;
+            _cipherService = cryptoService;
+        }
+
+        public List<KeyDto> Keys { get; private set; } = new();
+        public DecryptResponse Result { get; private set; }
 
         [BindProperty]
-        public Guid? SelectedKeyId { get; set; }
+        public Guid SelectedKeyId { get; set; }
+
         [BindProperty]
         public string CipherText { get; set; }
+
         [BindProperty]
         public string Iv { get; set; }
 
-        public List<KeyDto> Keys { get; private set; }
-        public DecryptResponse Result { get; private set; }
-
         public async Task OnGetAsync()
         {
-            Keys = await _factory.CreateClient("Api").GetFromJsonAsync<List<KeyDto>>("api/keys");
+            Keys = await _keyService.GetAllAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await OnGetAsync();
-            var client = _factory.CreateClient("Api");
-            var response = await client.PostAsJsonAsync($"api/keys/{SelectedKeyId}/decrypt", new DecryptRequest { CipherText = CipherText, Iv = Iv });
+            // repopulate the key list for redisplay
+            Keys = await _keyService.GetAllAsync();
 
-            if (response.IsSuccessStatusCode)
+            if (!ModelState.IsValid || SelectedKeyId == default)
             {
-                Result = await response.Content.ReadFromJsonAsync<DecryptResponse>();
+                ModelState.AddModelError("", "Please select a key and supply both CipherText and IV.");
+                return Page();
             }
+
+            // perform decryption
+            Result = await _cipherService.DecryptAsync(
+                SelectedKeyId,
+                CipherText,
+                Iv
+            );
             return Page();
         }
     }

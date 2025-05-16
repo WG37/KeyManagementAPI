@@ -1,5 +1,5 @@
-using AutoMapper;
 using KeyManagementAPI.Data;
+using KeyManagementAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace KeyManagementAPI
@@ -18,22 +18,8 @@ namespace KeyManagementAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // automap registration
-            var mappingConfig = new MapperConfiguration(config =>
-            {
-                config.AddProfile(new KeyMapProfile());
-            });
-            
-            IMapper mapper = mappingConfig.CreateMapper();
-
-            builder.Services.AddSingleton(mapper);
-
-
-            // HTTPClient Registration
-            builder.Services.AddHttpClient("Api", client =>
-            {
-                client.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"]);
-            });
+            builder.Services.AddScoped<IKeyService, KeyService>();
+            builder.Services.AddScoped<ICipherService, CipherService>();
 
             builder.Services.AddRazorPages();
 

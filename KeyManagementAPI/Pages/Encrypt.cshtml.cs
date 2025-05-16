@@ -1,38 +1,54 @@
 using KeyManagementAPI.DTOs;
+using KeyManagementAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using KeyManagementAPI.DTOs;
+using KeyManagementAPI.Services;
 
 namespace KeyManagementAPI.Pages
 {
     public class EncryptModel : PageModel
     {
-        private readonly IHttpClientFactory _factory;
-        public EncryptModel(IHttpClientFactory factory) => _factory = factory;
+        private readonly IKeyService _keyService;
+        private readonly ICipherService _cipherService;
 
+        public EncryptModel(IKeyService keyService, ICipherService cryptoService)
+        {
+            _keyService = keyService;
+            _cipherService = cryptoService;
+        }
+
+        public List<KeyDto> Keys { get; private set; } = new();
+        public EncryptResponse Result { get; private set; }
 
         [BindProperty]
-        public Guid? SelectedKeyId { get; set; }
+        public Guid SelectedKeyId { get; set; }
+
         [BindProperty]
         public string PlainText { get; set; }
 
-        public List<KeyDto> Keys { get; private set; }
-        public EncryptResponse Result { get; private set; }
-
         public async Task OnGetAsync()
         {
-            Keys = await _factory.CreateClient("Api").GetFromJsonAsync<List<KeyDto>>("api/keys");
+            Keys = await _keyService.GetAllAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await OnGetAsync();
-            var client = _factory.CreateClient("Api");
-            var response = await client.PostAsJsonAsync($"api/keys/{SelectedKeyId}/encrypt", new EncryptRequest { PlainText = PlainText });
+            // get all keys for dropdown
+            Keys = await _keyService.GetAllAsync();
 
-            if (response.IsSuccessStatusCode)
+            if (!ModelState.IsValid || SelectedKeyId == default)
             {
-                Result = await response.Content.ReadFromJsonAsync<EncryptResponse>();
+                ModelState.AddModelError("", "Please select a key and enter plaintext.");
+                return Page();
             }
+
+            // perform encryption
+            Result = await _cipherService.EncryptAsync(
+                SelectedKeyId,
+                PlainText
+            );
+
             return Page();
         }
     }

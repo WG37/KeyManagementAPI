@@ -1,29 +1,25 @@
+using KeyManagementAPI.DTOs;
+using KeyManagementAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Net.Http.Json;
+
 
 namespace KeyManagementAPI.Pages
 {
     public class CreateKeyModel : PageModel
     {
-        private readonly IHttpClientFactory _factory;
-        public CreateKeyModel(IHttpClientFactory factory) => _factory = factory;
+        private readonly IKeyService _keyservice;
+        public CreateKeyModel(IKeyService keyservice) => _keyservice = keyservice;
 
         [BindProperty]
-        public string Name { get; set; }
-
-        [BindProperty]
-        public int KeySize { get; set; } = 256;
+        public CreateKeyDto Input { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var client = _factory.CreateClient("Api");
-            var response = await client.PostAsJsonAsync("Api/Keys", new { Name, KeySize });
+            if (!ModelState.IsValid) return Page();
 
-            if (response.IsSuccessStatusCode) 
-                return RedirectToPage("Index");
-
-            return Page();
+            await _keyservice.CreateAsync(Input);
+            return RedirectToPage("Index");
         }
     }
 }

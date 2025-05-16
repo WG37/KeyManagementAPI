@@ -1,6 +1,7 @@
 ﻿using KeyManagementAPI.Data;
 using KeyManagementAPI.DTOs;
 using KeyManagementAPI.Entities;
+using KeyManagementAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,51 +12,22 @@ namespace KeyManagementAPI.Controllers
     [Route("api/keys/{keyId}")]
     public class CiphersController : ControllerBase
     {
-        private readonly AppDbContext _db;
-        public CiphersController(AppDbContext db) => _db = db;
+        private readonly ICipherService _cipher;
+        public CiphersController(ICipherService cipher) => _cipher = cipher;
 
 
         [HttpPost("encrypt")]
         public async Task<IActionResult> Encrypt(Guid keyId, [FromBody] EncryptRequest request)
         {
-            var key = await _db.Keys.FindAsync(keyId);
-            if (key == null) return NotFound();
-            if (key.Status != KeyStatus.Active)
-                return BadRequest();
-
-            using var aes = Aes.Create();
-            aes.Key = key.Keybytes;
-            aes.GenerateIV();
-
-            var ptBytes = Encoding.UTF8.GetBytes(request.PlainText);
-            var ctBytes = aes.CreateEncryptor().TransformFinalBlock(ptBytes, 0, ptBytes.Length);
-
-            return Ok(new EncryptResponse
-            {
-                CipherText = Convert.ToBase64String(ctBytes),
-                Iv = Convert.ToBase64String(aes.IV)
-            });
+            var response = await _cipher.EncryptAsync(keyId, request.PlainText);
+            return Ok(response);
         }
 
         [HttpPost("decrypt")]
         public async Task<IActionResult> Decrypt(Guid keyId, [FromBody] DecryptRequest request)
         {
-            var key = await _db.Keys.FindAsync(keyId);
-            if (key == null) return NotFound();
-            if (key.Status != KeyStatus.Active)
-                return BadRequest();
-
-            using var aes = Aes.Create();
-            aes.Key = key.Keybytes;
-            aes.IV = Convert.FromBase64String(request.Iv);
-
-            var ctBytes = Convert.FromBase64String(request.CipherText);
-            var ptBytes = aes.CreateDecryptor().TransformFinalBlock(ctBytes, 0, ctBytes.Length);
-
-            return Ok(new DecryptResponse
-            {
-                PlainText = Encoding.UTF8.GetString(ptBytes)
-            });
+            var response = await _cipher.DecryptAsync(keyId, request.CipherText, request.Iv);
+            return Ok(response);
         }
     }
 }

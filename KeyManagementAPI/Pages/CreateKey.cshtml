@@ -1,34 +1,44 @@
 ﻿@page
 @model KeyManagementAPI.Pages.CreateKeyModel
 @{
-    ViewData["Title"] = "Key Creation";
+    ViewData["Title"] = "Create Key";
 }
 
 <div class="container py-5">
-    <h1 class="text-center mb-4">Create New Key</h1>
-    <form method="post">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label">Name</label>
-                    <input asp-for="Name" class="form-control" />
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Create New Key</h3>
                 </div>
-                <div class="mb-3">
-                    <label asp-for="KeySize" class="form-label">Key Size (bits)</label>
-                    <select asp-for="KeySize" class="form-select">
-                        <option>128</option>
-                        <option>192</option>
-                        <option>256</option>
-                    </select>
-                </div>
-                <div class="text-center">
-                    <button type="submit"
-                            class="btn px-4 text-white"
-                            style="background-color:#2a2f5b; border-color:#2a2f5b;">
-                        Generate
-                    </button>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label asp-for="Input.Name" class="form-label">Name</label>
+                            <input asp-for="Input.Name" class="form-control" />
+                            <span asp-validation-for="Input.Name" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Input.KeySize" class="form-label">Key Size</label>
+                            <select asp-for="Input.KeySize" class="form-select">
+                                <option value="128">128-bit</option>
+                                <option value="192">192-bit</option>
+                                <option value="256">256-bit</option>
+                            </select>
+                            <span asp-validation-for="Input.KeySize" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Key</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
