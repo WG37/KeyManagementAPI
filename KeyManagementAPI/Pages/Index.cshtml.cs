@@ -9,19 +9,19 @@ namespace KeyManagementAPI.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly IKeyService _keyservice;
-        public IndexModel(IKeyService keyservice) => _keyservice = keyservice;
+        private readonly IKeyService _keyService;
+        public IndexModel(IKeyService keyservice) => _keyService = keyservice;
 
         public List<KeyDto> Keys { get; private set; } = new();
 
         public async Task OnGetAsync()
         {
-            Keys = await _keyservice.GetAllAsync();
+            Keys = await _keyService.GetAllAsync();
         }
 
         public async Task<IActionResult> OnPostDelete(Guid id)
         {
-            await _keyservice.DeleteAsync(id);
+            await _keyService.DeleteAsync(id);
             return RedirectToPage();
         }
     }

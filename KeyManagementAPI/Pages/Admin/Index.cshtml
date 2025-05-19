@@ -1,0 +1,32 @@
+﻿@page
+@model KeyManagementAPI.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-5">
+    <h1 class="display-5 mb-4>Admin Dashboard"</h1>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-dark">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Total Keys</h4>
+                    <p class="display-6">Total Keys: @Model.Keys.Count</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-dark">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Active Users</h4>
+                    <!-- placeholder -->
+                    <p class="display-6">Test 2</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>

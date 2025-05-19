@@ -8,8 +8,8 @@ namespace KeyManagementAPI.Pages
 {
     public class CreateKeyModel : PageModel
     {
-        private readonly IKeyService _keyservice;
-        public CreateKeyModel(IKeyService keyservice) => _keyservice = keyservice;
+        private readonly IKeyService _keyService;
+        public CreateKeyModel(IKeyService keyservice) => _keyService = keyservice;
 
         [BindProperty]
         public CreateKeyDto Input { get; set; }
@@ -18,7 +18,7 @@ namespace KeyManagementAPI.Pages
         {
             if (!ModelState.IsValid) return Page();
 
-            await _keyservice.CreateAsync(Input);
+            await _keyService.CreateAsync(Input);
             return RedirectToPage("Index");
         }
     }
