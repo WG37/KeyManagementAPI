@@ -4,7 +4,9 @@ using KeyManagementAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace KeyManagementAPI
 {
@@ -31,19 +33,47 @@ namespace KeyManagementAPI
                 options.SignIn.RequireConfirmedAccount = false;
             }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
-            // cookie auth
-            builder.Services.ConfigureApplicationCookie(options =>
+            builder.Services.ConfigureApplicationCookie(o =>
             {
-                options.LoginPath = "/Identity/Account/Login";
-                options.LogoutPath = "/Identity/Account/Logout";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                o.Cookie.Name = "KeyAPI.Auth";
+                o.Cookie.HttpOnly = true;
+                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                o.Cookie.SameSite = SameSiteMode.Strict;
 
-                options.Cookie.Name = ".KeyAPI.Auth";
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromHours(8);
-                options.SlidingExpiration = true;
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                o.SlidingExpiration = true;
+
+                o.LoginPath = "/Identity/Account/Login";
+                o.LogoutPath = "/Identity/Account/Logout";
+                o.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
-               
+
+            // JWT auth
+            var jwtCfg = builder.Configuration.GetSection("jwt");
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtCfg["Key"]!));
+
+            // let ASP.net know we are registering auth system -- using our jwt authentication
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;   // process: read bearer header => validate token => set HttpContext.User // REVIEW //
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;      // process: if request is unauthenticated => respond with 401 Unauthorized // REVIEW //
+            })
+             .AddJwtBearer(bearerOptions =>
+             {
+                 bearerOptions.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidIssuer = jwtCfg["Issuer"],
+
+                     ValidateAudience = true,
+                     ValidAudience = jwtCfg["Audience"],
+
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = signingKey,
+
+                     ClockSkew = TimeSpan.Zero
+                 };
+             });
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
