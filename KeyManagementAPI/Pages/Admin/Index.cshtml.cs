@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using KeyManagementAPI.Services;
 using KeyManagementAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using KeyManagementAPI.Services.Symmetric.KeyServices;
 
 namespace KeyManagementAPI.Pages.Admin
 {

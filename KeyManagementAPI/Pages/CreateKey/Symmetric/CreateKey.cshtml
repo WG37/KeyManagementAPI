@@ -1,0 +1,45 @@
+﻿@page
+@model KeyManagementAPI.Pages.CreateKey.Symmetric.CreateKeyModel
+@{
+    ViewData["Title"] = "Create Key";
+}
+
+<div class="max-w-xl mx-auto mt-10">
+    <div class="card shadow-xl bg-base-100">
+        <div class="card-body">
+            <h2 class="card-title">Create New Key</h2>
+
+            <form method="post" class="space-y-4">
+                <div>
+                    <label asp-for="Input.Name" class="label">
+                        <span class="label-text">Name</span>
+                    </label>
+                    <input asp-for="Input.Name" class="input input-bordered w-full" />
+                    <span asp-validation-for="Input.Name" class="text-error text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Input.KeySize" class="label">
+                        <span class="label-text">Key Size</span>
+                    </label>
+                    <select asp-for="Input.KeySize" class="select select-bordered w-full">
+                        <option value="128">128-bit</option>
+                        <option value="192">192-bit</option>
+                        <option value="256">256-bit</option>
+                    </select>
+                    <span asp-validation-for="Input.KeySize" class="text-error text-sm"></span>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="btn btn-primary w-full">Create Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

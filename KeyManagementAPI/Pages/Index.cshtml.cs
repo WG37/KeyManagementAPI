@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using KeyManagementAPI.DTOs;
-using KeyManagementAPI.Services;
+using KeyManagementAPI.Services.Symmetric.KeyServices;
 
 
 namespace KeyManagementAPI.Pages

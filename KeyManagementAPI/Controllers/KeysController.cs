@@ -4,7 +4,7 @@ using KeyManagementAPI.Entities;
 using KeyManagementAPI.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
-using KeyManagementAPI.Services;
+using KeyManagementAPI.Services.Symmetric.KeyServices;
 
 namespace KeyManagementAPI.Controllers;
 

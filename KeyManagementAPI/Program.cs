@@ -1,5 +1,4 @@
 using KeyManagementAPI.Data;
-using KeyManagementAPI.Services;
 using KeyManagementAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -7,6 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using KeyManagementAPI.Services.AsymmetricServices.KeyServices;
+using KeyManagementAPI.Services.AsymmetricServices.CipherServices;
+using KeyManagementAPI.Services.SymmetricServices.KeyServices;
+using KeyManagementAPI.Services.SymmetricServices.CipherServices;
+using KeyManagementAPI.Services.PredictServices;
+
 
 namespace KeyManagementAPI
 {
@@ -35,17 +40,12 @@ namespace KeyManagementAPI
 
             builder.Services.ConfigureApplicationCookie(o =>
             {
-                o.Cookie.Name = "KeyAPI.Auth";
-                o.Cookie.HttpOnly = true;
-                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                o.Cookie.SameSite = SameSiteMode.Strict;
-
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                o.SlidingExpiration = true;
-
+                o.Cookie.Name = ".Key.API";
                 o.LoginPath = "/Identity/Account/Login";
-                o.LogoutPath = "/Identity/Account/Logout";
-                o.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                o.LogoutPath = "/IdentityAccount/Logout";
+                o.AccessDeniedPath = "/IdentityAccount/AccessDenied";
+                o.ExpireTimeSpan = TimeSpan.FromHours(8);
+                o.SlidingExpiration = true;
             });
 
             // JWT auth
@@ -55,10 +55,11 @@ namespace KeyManagementAPI
             // let ASP.net know we are registering auth system -- using our jwt authentication
             builder.Services.AddAuthentication(o =>
             {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;   // process: read bearer header => validate token => set HttpContext.User // REVIEW //
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;      // process: if request is unauthenticated => respond with 401 Unauthorized // REVIEW //
+                o.DefaultScheme = IdentityConstants.ApplicationScheme;
+                o.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;   // process: read bearer header => validate token => set HttpContext.User // REVIEW //
+                o.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;      // process: if request is unauthenticated => respond with 401 Unauthorized // REVIEW //
             })
-             .AddJwtBearer(bearerOptions =>
+             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, bearerOptions =>
              {
                  bearerOptions.TokenValidationParameters = new TokenValidationParameters
                  {
@@ -75,17 +76,25 @@ namespace KeyManagementAPI
                  };
              });
 
+            // Service Registration
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IKeyService, KeyService>();
             builder.Services.AddScoped<ICipherService, CipherService>();
+
+            builder.Services.AddScoped<IAsymKeyService, AsymKeyService>();
+            builder.Services.AddScoped<IAsymCipherService, AsymCipherService>();
+
+            builder.Services.AddSingleton<IBruteEstimationService, BruteEstimationService>();
             builder.Services.AddScoped<IEmailSender, DummyEmailSender>();
 
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
+            
+            app.UseHttpsRedirection();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -96,21 +105,20 @@ namespace KeyManagementAPI
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
+            app.UseRouting();
 
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.MapControllers();
-
             app.MapRazorPages();
             // seed call
-            await SeedAsync(app);
+           // await SeedAsync(app);
 
             app.Run();
 
             // admin seeding
+            /*
             static async Task SeedAsync(IHost host)
             {
                 using var scope = host.Services.CreateScope();
@@ -143,9 +151,9 @@ namespace KeyManagementAPI
                         var errors = string.Join(",", result.Errors.Select(e => e.Description));
                         throw new Exception($"Admin seeding failed: {errors}");
                     }
-                    await userMgmt.AddToRoleAsync(admin, adminRole);
+                    await userMgmt.AddToRoleAsync(admin, adminRole); 
                 }
-            }
+            }  */
         }
     }
 }

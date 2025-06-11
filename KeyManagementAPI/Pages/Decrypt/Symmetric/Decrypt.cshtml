@@ -1,0 +1,60 @@
+﻿@page
+@model KeyManagementAPI.Pages.Decrypt.Symmetric.DecryptModel
+@{
+    ViewData["Title"] = "Decrypt";
+}
+
+<div class="max-w-2xl mx-auto mt-10">
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">Decrypt Data</h2>
+
+            <form method="post" class="space-y-4">
+                <div>
+                    <label asp-for="SelectedKeyId" class="label">
+                        <span class="label-text">Select Key</span>
+                    </label>
+                    <select asp-for="SelectedKeyId" class="select select-bordered w-full">
+                        <option value="">-- choose key --</option>
+                        @foreach (var k in Model.Keys)
+                        {
+                            <option value="@k.Id">@k.Name (@k.KeySize)-bit</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label asp-for="CipherText" class="label">
+                        <span class="label-text">Ciphertext</span>
+                    </label>
+                    <textarea asp-for="CipherText" class="textarea textarea-bordered w-full" rows="3"></textarea>
+                </div>
+
+                <div>
+                    <label asp-for="Iv" class="label">
+                        <span class="label-text">Initialization Vector (IV)</span>
+                    </label>
+                    <input asp-for="Iv" class="input input-bordered w-full" />
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-primary w-full">Decrypt</button>
+                </div>
+            </form>
+
+            @if (Model.Result != null)
+            {
+                <div class="mt-6">
+                    <h3 class="font-semibold">Plaintext</h3>
+                    <textarea class="textarea textarea-bordered w-full mt-2" rows="3" readonly>@Model.Result.PlainText</textarea>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // page-specific JS if needed
+    </script>
+}

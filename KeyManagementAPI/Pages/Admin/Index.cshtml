@@ -4,29 +4,22 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container py-5">
-    <h1 class="display-5 mb-4>Admin Dashboard"</h1>
+<div class="max-w-6xl mx-auto mt-10">
+    <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-dark">
-                <div class="card-body text-center">
-                    <h4 class="card-title">Total Keys</h4>
-                    <p class="display-6">Total Keys: @Model.Keys.Count</p>
-                </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card bg-base-100 shadow-xl border border-base-300">
+            <div class="card-body items-center text-center">
+                <h2 class="card-title">Total Keys</h2>
+                <p class="text-4xl font-semibold">@Model.Keys.Count</p>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card shadow-sm border-dark">
-                <div class="card-body text-center">
-                    <h4 class="card-title">Active Users</h4>
-                    <!-- placeholder -->
-                    <p class="display-6">Test 2</p>
-                </div>
+        <div class="card bg-base-100 shadow-xl border border-base-300">
+            <div class="card-body items-center text-center">
+                <h2 class="card-title">Active Users</h2>
+                <p class="text-4xl font-semibold">Test 2</p>
             </div>
         </div>
-    </div>
-</div>
     </div>
 </div>

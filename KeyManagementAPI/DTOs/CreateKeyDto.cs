@@ -4,5 +4,6 @@
     {
         public string Name { get; set; }
         public int KeySize { get; set; }
+        public string Algorithm { get; set; }
     }
 }

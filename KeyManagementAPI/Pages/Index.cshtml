@@ -4,37 +4,42 @@
     ViewData["Title"] = "Key Management Board";
 }
 
-<div class="container py-5">
-    <h1 class="mb-4">Keys</h1>
-    <div class="table-responsive">
-        <table class="table table-striped">
+<div class="max-w-5xl mx-auto mt-10">
+    <h1 class="text-3xl font-bold mb-6">Keys</h1>
+
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Size</th>
                     <th>Status</th>
                     <th>Created</th>
-                    <th></th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var k in Model.Keys)
                 {
-                 <tr class="@(k.Status == KeyStatus.Deleted)">
+                    <tr class="@(k.Status == KeyStatus.Deleted ? "opacity-50" : "")">
                         <td>@k.Name</td>
                         <td>@k.KeySize</td>
-                        <td>@k.Status</td>
-                        <td>@k.CreatedOn</td>
                         <td>
-                 @if (k.Status == KeyStatus.Active)
-                 {
-                <form method="post" asp-page-handler="Delete" class="d-inline"> 
-                <input type="hidden" name="id" value="@k.Id" />
-                <button type="submit" class="btn btn-sm btn-warning">Delete</button>
-                </form>
-                 }
-                 </td>
-                 </tr>
+                            <span class="badge @(k.Status == KeyStatus.Active ? "badge-success" : "badge-error")">
+                                @k.Status
+                            </span>
+                        </td>
+                        <td>@k.CreatedOn.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (k.Status == KeyStatus.Active)
+                            {
+                                <form method="post" asp-page-handler="Delete">
+                                    <input type="hidden" name="id" value="@k.Id" />
+                                    <button type="submit" class="btn btn-sm btn-warning">Delete</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>

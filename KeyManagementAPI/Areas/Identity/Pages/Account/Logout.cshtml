@@ -2,20 +2,43 @@
 @model LogoutModel
 @{
     ViewData["Title"] = "Log out";
+    Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>
+<div class="max-w-md mx-auto mt-20">
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center">
+
+            <h2 class="card-title">Log out</h2>
+
+            @if (User?.Identity?.IsAuthenticated == true)
+            {
+                <p class="mb-4 text-base-content/80">
+                    Are you sure you want to end your session?
+                </p>
+                <form asp-area="Identity"
+                      asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                      method="post"
+                      class="w-full">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Confirm Logout
+                    </button>
+                </form>
+            }
+            else
+            {
+                <p class="mb-4 text-success font-semibold">
+                    You have successfully logged out.
+                </p>
+                <a asp-area="Identity"
+                   asp-page="/Account/Login"
+                   class="btn btn-primary w-full">
+                    Sign in again
+                </a>
+            }
+
+        </div>
+    </div>
+</div>
+

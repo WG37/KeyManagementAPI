@@ -1,0 +1,52 @@
+﻿@page
+@model KeyManagementAPI.Pages.Encrypt.Symmetric.EncryptModel
+@{
+    ViewData["Title"] = "Encrypt";
+}
+
+<div class="max-w-2xl mx-auto mt-10">
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">Encrypt Data</h2>
+
+            <form method="post" class="space-y-4">
+                <div>
+                    <label asp-for="SelectedKeyId" class="label">
+                        <span class="label-text">Select Key</span>
+                    </label>
+                    <select asp-for="SelectedKeyId" class="select select-bordered w-full">
+                        <option value="">-- choose key --</option>
+                        @foreach (var k in Model.Keys)
+                        {
+                            <option value="@k.Id">@k.Name (@k.KeySize)-bit</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label asp-for="PlainText" class="label">
+                        <span class="label-text">Plaintext</span>
+                    </label>
+                    <textarea asp-for="PlainText" class="textarea textarea-bordered w-full" rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">Encrypt</button>
+            </form>
+
+            @if (Model.Result != null)
+            {
+                <div class="mt-6 space-y-4">
+                    <div>
+                        <h3 class="font-semibold">Ciphertext</h3>
+                        <textarea class="textarea textarea-bordered w-full mt-2" rows="4" readonly>
+                            @Model.Result.CipherText</textarea>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Initialization Vector (IV)</h3>
+                        <input class="input input-bordered w-full mt-2" readonly value="@Model.Result.Iv" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

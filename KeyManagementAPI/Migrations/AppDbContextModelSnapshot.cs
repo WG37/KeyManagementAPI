@@ -28,11 +28,14 @@ namespace KeyManagementAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Algorithm")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("KeyBytes")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("KeySize")
@@ -41,6 +44,12 @@ namespace KeyManagementAPI.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("PrivKey")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PubKey")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
