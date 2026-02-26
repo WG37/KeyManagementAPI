@@ -19,11 +19,12 @@ Features
 - Asymmetric key generation and encryption
   
 - ASP.NET Core Identity for authentication and authorization
+  
+- Role-Based Access Control
 
 - Test endpoint for encrypting input strings to ciphertext
 
 - RESTful API architecture
-
 
 Tech Stack
 
