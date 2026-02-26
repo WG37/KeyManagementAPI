@@ -1,12 +1,10 @@
 KeyManagementAPI
 
-KeyManagementAPI is a work-in-progress REST API built in C# for managing cryptographic keys. The project focuses on secure key generation, storage, and digital signing and verification workflows.
+KeyManagementAPI is a work-in-progress REST API built in C# for managing cryptographic keys. The project focuses on symmetric and asymmetric key generation, secure storage, and encryption workflows within a structured backend architecture.
 
 Overview
 
-This API is designed to explore backend security patterns and cryptographic operations in a structured service-oriented architecture. It provides endpoints for generating keys, securely storing them, and performing signing and verification operations.
-
-The project emphasizes clean API design, proper key handling practices, and maintainable backend structure.
+This API is designed to explore backend security patterns and applied cryptography in a service-oriented architecture. It provides endpoints for generating symmetric and asymmetric keys, securely storing them in SQL Server, and encrypting input data into ciphertext.
 
 Features
 
@@ -14,19 +12,22 @@ Features
 
 - Secure key storage and retrieval
 
-- Digital signing of data
+- Symmetric key generation and encryption
 
-- Signature verification
+- Asymmetric key generation and encryption
+
+- Test endpoint for encrypting input strings to ciphertext
 
 - RESTful API architecture
 
-- Structured request/response validation
 
 Tech Stack
 
 - C# / .NET
 
 - ASP.NET Core Web API
+  
+- SQL Server
   
 - Razor Pages
 
@@ -35,13 +36,13 @@ Tech Stack
 Architecture
 
 The API exposes endpoints for key lifecycle management and cryptographic operations.
-Keys are generated server-side and stored securely within the application’s configured storage layer.
-Signing and verification operations are handled through dedicated endpoints with structured input validation.
+Keys are generated server-side and stored securely within the SQL database.
 
 Status
 
 - Core key generation and signing logic implemented.
 - Storage improvements and additional security hardening are in progress.
+- AI prediction also in progress.
 
 Running Locally
 
@@ -49,8 +50,10 @@ Running Locally
 
 - Open the solution in Visual Studio
 
-- Configure application settings if required
+- Update the SQL Server connection string in appsettings.Development.json to match your local database configuration
 
-- Run the API project
+- Ensure the required database exists (or run migrations if configured)
 
-- Test endpoints using Postman or similar tools
+- Run the KeyManagementAPI project
+
+- Test endpoints using Postman or via https://localhost:{port}
