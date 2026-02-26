@@ -1,10 +1,12 @@
 KeyManagementAPI
 
-KeyManagementAPI is a work-in-progress REST API built in C# for managing cryptographic keys. The project focuses on symmetric and asymmetric key generation, secure storage, and encryption workflows within a structured backend architecture.
+KeyManagementAPI is a work-in-progress REST API built in C# for managing cryptographic keys. The project focuses on symmetric and asymmetric key generation, secure storage, encryption workflows, and authenticated access control using ASP.NET Core Identity.
 
 Overview
 
-This API is designed to explore backend security patterns and applied cryptography in a service-oriented architecture. It provides endpoints for generating symmetric and asymmetric keys, securely storing them in SQL Server, and encrypting input data into ciphertext.
+This API is designed to explore backend security patterns and applied cryptography within a structured service-oriented architecture. It provides endpoints for generating symmetric and asymmetric keys, securely storing them in SQL Server, and encrypting input data into ciphertext.
+
+The application integrates ASP.NET Core Identity to handle authentication and authorization, ensuring that cryptographic operations are protected through role-based access control.
 
 Features
 
@@ -15,6 +17,8 @@ Features
 - Symmetric key generation and encryption
 
 - Asymmetric key generation and encryption
+  
+- ASP.NET Core Identity for authentication and authorization
 
 - Test endpoint for encrypting input strings to ciphertext
 
